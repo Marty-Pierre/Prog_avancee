@@ -1,15 +1,17 @@
 #ifndef __jeu_h__
 #define __jeu_h__
-#define NB_ELEM_LARGEUR_TERRAIN 16
-#define NB_ELEM_HAUTEUR_TERRAIN 10
-#define NB_ELEM_LARGEUR_PERSO 95
-#define NB_ELEM_HAUTEUR_PERSO 125
-#define TAILLE_CARRE 32
+
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+#define NB_ELEM_LARGEUR_TERRAIN 16
+#define NB_ELEM_HAUTEUR_TERRAIN 10
+#define NB_ELEM_LARGEUR_PERSO 95
+#define NB_ELEM_HAUTEUR_PERSO 125
+#define TAILLE_CARRE 32
 
 struct terrain_s{
   SDL_Surface* terrain;
@@ -31,7 +33,7 @@ struct world_s{
 };
 typedef struct world_s world_t;
 
-SDL_Surface* init_sdl(int width, int height);
+SDL_Window* init_sdl(int width, int height);
 void quit_sdl();
 SDL_Surface* load_image(char path[]);
 

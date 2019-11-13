@@ -44,14 +44,18 @@
  * \return la surface SDL correspondant à l'écran de jeu
  */
 
-SDL_Surface* init_sdl(int width, int height){
-    SDL_Surface* screen = NULL;
+SDL_Window* init_sdl(int width, int height){
+    SDL_Window* screen = NULL;
     
     SDL_Init( SDL_INIT_VIDEO );
     
     //Set up screen
-    screen = SDL_SetVideoMode( width, height, 16, SDL_SWSURFACE| SDL_DOUBLEBUF | SDL_ANYFORMAT );
-    
+    //screen = SDL_SetVideoMode( width, height, 16, SDL_SWSURFACE| SDL_DOUBLEBUF | SDL_ANYFORMAT );
+    screen = SDL_CreateWindow("Ma fenêtre de jeu", 
+			      SDL_WINDOWPOS_UNDEFINED, 
+			      SDL_WINDOWPOS_UNDEFINED, 
+			      width, height, 
+			      SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
     return screen;
 }
 
