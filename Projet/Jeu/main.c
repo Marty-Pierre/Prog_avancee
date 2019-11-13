@@ -5,8 +5,7 @@
  * \date octobre 2019
  */
 
-#include "sdl-light.h"
-#include "sdl-light.h"
+#include "jeu.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -54,7 +53,7 @@
  */
 
 void init_data(world_t * world){
-  int i;
+  //int i;
   world->background = load_image("image/fond.bmp");
   
 }
