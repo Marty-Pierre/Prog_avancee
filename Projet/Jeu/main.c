@@ -5,8 +5,7 @@
  * \date octobre 2019
  */
 
-#include "sdl-light.h"
-#include "sdl-light.h"
+#include "jeu.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
