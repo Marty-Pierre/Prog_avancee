@@ -1,0 +1,1 @@
+CC = gccCFLAGS = -W -Wall -ansi -std=c99 -gLIBS = -L./SDL2_ttf/.libsLDFLAGS = ‘sdl2-config --cflags --libs‘ -lSDL2_ttfINCLUDES = -I./SDL2_ttfEXEC = mainSRC = main.cOBJ = $(SRC:.c=.o)all: $(EXEC)main: $(OBJ)$(CC) $(CFLAGS) $(INCLUDES) -o $@ $^ $(LIBS) $(LDFLAGS)%.o: %.c$(CC) $(CFLAGS) -o $@ -c $<clean:rm -rf *.o *~mrproper: cleanrm -rf $(EXEC)
