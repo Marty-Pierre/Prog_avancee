@@ -44,7 +44,7 @@
  * \return la surface SDL correspondant à l'écran de jeu
  */
 
-SDL_Window* init_sdl(int width, int height){
+/*SDL_Window* init_sdl(int width, int height){
     SDL_Window* screen = NULL;
     
     SDL_Init( SDL_INIT_VIDEO );
@@ -62,7 +62,7 @@ SDL_Window* init_sdl(int width, int height){
 /** 
  *\brief La fonction permet de quitter la SDL
  * en supprimant notamment la surface correspondant à l'écran de jeu
- */
+ 
 
 void quit_sdl(){
     SDL_Quit();
@@ -73,7 +73,7 @@ void quit_sdl(){
  * \param path est le chemin du fichier image. Le fichier doit être obligatoirement du BMP.
  * \return la surface SDL contenant l'image. Elle renvoie NULL si le chargement a échoué
  * (ex. le fichier path n'existe pas)
- */
+ 
 
 SDL_Surface* load_image(char path[]){
     SDL_Surface* loadedImage = NULL;
@@ -90,4 +90,20 @@ SDL_Surface* load_image(char path[]){
     }
     return optimizedImage;
     
+}
+*/
+
+//Mettre en place un contexte de rendu de l'ecran
+
+SDL_Texture* charger_image(const char* nomfichier, SDL_Renderer* renderer)
+{
+  SDL_Surface* surf = SDL_LoadBMP(nomfichier);
+  return SDL_CreateTextureFromSurface(renderer, surf);
+}
+
+SDL_Texture* charger_image_tranparente(const char* nomfichier, SDL_Renderer* renderer, Uint8 r, Uint8 g, Uint8 b){
+  Uint32 colTrans = SDL_MapRGB(const SDL_PixelFormat* format, Uint8 r, Uint8 g, Uint8 b);
+  SDL_Surface* surf = SDL_LoadBMP(nomfichier);
+  SDL_SetColorKey(surf,SDL_TRUE,r,g,b);
+  return SDL_CreateTextureFromSurface(renderer, surf);
 }

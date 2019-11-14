@@ -33,12 +33,15 @@ struct world_s{
 };
 typedef struct world_s world_t;
 
+SDL_Texture* charger_image(const char* nomfichier, SDL_Renderer* renderer);
+SDL_Texture* charger_image_transparente(const char* nomfichier, SDL_Renderer* renderer, Uint8 r, Uint8 g, Uint8 b);
+/*
 SDL_Window* init_sdl(int width, int height);
 void quit_sdl();
 SDL_Surface* load_image(char path[]);
 
 
 void init_data(world_t * world);
-
+*/
 
 #endif
