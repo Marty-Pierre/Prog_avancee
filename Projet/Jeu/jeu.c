@@ -101,9 +101,17 @@ SDL_Texture* charger_image(const char* nomfichier, SDL_Renderer* renderer)
   return SDL_CreateTextureFromSurface(renderer, surf);
 }
 
-SDL_Texture* charger_image_tranparente(const char* nomfichier, SDL_Renderer* renderer, Uint8 r, Uint8 g, Uint8 b){
-  Uint32 colTrans = SDL_MapRGB(const SDL_PixelFormat* format, Uint8 r, Uint8 g, Uint8 b);
+SDL_Texture* charger_image_transparente(const char* nomfichier, SDL_Renderer* renderer, Uint8 r, Uint8 g, Uint8 b){
+  //Uint32 colTrans = SDL_MapRGB(const SDL_PixelFormat* format, r, g, b);
   SDL_Surface* surf = SDL_LoadBMP(nomfichier);
-  SDL_SetColorKey(surf,SDL_TRUE,r,g,b);
-  return SDL_CreateTextureFromSurface(renderer, surf);
+  if(surf != NULL){
+    // SDL_PixelFormat = SDL_PIXELFORMAT_RGB888;
+    SDL_PixelFormat* pformat = surf->format;
+    Uint32 colTrans = SDL_MapRGB(pformat, r, g, b);
+    SDL_SetColorKey(surf, SDL_TRUE, colTrans);
+    return SDL_CreateTextureFromSurface(renderer, surf);
+  }else{
+    printf("Pb de chargement de la texture\n");
+    return NULL;
+  }
 }

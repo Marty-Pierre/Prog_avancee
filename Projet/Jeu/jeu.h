@@ -2,6 +2,7 @@
 #define __jeu_h__
 
 #include <SDL2/SDL.h>
+//#include "SDL2_image"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,6 +36,10 @@ typedef struct world_s world_t;
 
 SDL_Texture* charger_image(const char* nomfichier, SDL_Renderer* renderer);
 SDL_Texture* charger_image_transparente(const char* nomfichier, SDL_Renderer* renderer, Uint8 r, Uint8 g, Uint8 b);
+char** allouer_tab_2D(int l, int c);
+void desallouer_tab_2D(char** tab);
+void afficher_tab_2D(char** tab, int l, int c);
+void taille_fichier(const char* nomFichier, int* nbLig, int* nbCol);
 /*
 SDL_Window* init_sdl(int width, int height);
 void quit_sdl();

@@ -6,6 +6,7 @@
  */
 
 #include "jeu.h"
+//#include "SDL2_image"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -14,12 +15,12 @@
 /**
  * \brief Largeur de l'écran de jeu
  */
-#define SCREEN_WIDTH 1288
+#define SCREEN_WIDTH 1000
 
 /**
  * \brief Hauteur de l'écran de jeu
  */
-#define SCREEN_HEIGHT 725
+#define SCREEN_HEIGHT 700
 
 /**
  * \brief Largeur du terrain
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
     }
 
   //Creer la fenetre
-  fenetre = SDL_CreateWindow("Fenetre SDL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 600, SDL_WINDOW_RESIZABLE);
+  fenetre = SDL_CreateWindow("Fenetre SDL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
   if (fenetre == NULL) //En cas d'erreur
     {
       printf("Erreur de la creation d'une fenetre: %s",SDL_GetError());
@@ -86,21 +87,40 @@ int main(int argc, char *argv[])
   //Charger l'image
   SDL_Texture* fond = charger_image("image/fond.bmp", ecran);
 
-  //Charger l(image avec la transparence
-  Uint8 r = 255, g = 255, b = 255;
-  SDL_Texture* obj = charger_image_transparente("sprite.bmp", ecran, r, g ,b);
+  //Charger l'image avec la transparence
+  Uint8 r = 0, g = 255, b = 255;
+  SDL_Texture* obj = charger_image("image/Dwarf.bmp", ecran);
 
+  //Creation tab 2d pour perso
+  SDL_Rect** tab = malloc(sizeof(*tab) * 10);
+  tab[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * 100);
+  for(int i = 1; i < 10; i++)
+    {
+      tab[i] = tab[i-1] + 10;
+    }
+  /*
   SDL_Rect SrcR;
   SrcR.x = 0;
   SrcR.y = 0;
-  SrcR.w = 100;
-  SrcR.h = 100;
-
+  SrcR.w = 32; //Largeur de l'objet a recuperer
+  SrcR.h = 32; //Hauteur de l'objet a recuperer
+  */
+  for(int i = 0; i < 10; i++)
+    {
+      for(int j = 0; j < 10; j++)
+	{
+	  tab[i][j].x = i * TAILLE_CARRE;
+	  tab[i][j].y = j * TAILLE_CARRE;
+	  tab[i][j].w = TAILLE_CARRE;
+	  tab[i][j].h = TAILLE_CARRE;
+	}
+    }
+  SDL_Rect SrcR = tab[0][0];
   SDL_Rect DestR;
-  DestR.x = 350;
-  DestR.y = 350;
-  DestR.w = (SrcR.w)/3;
-  DestR.h = (SrcR.h)/3;
+  DestR.x = (SCREEN_WIDTH / 2) - SrcR.w ; //position de l'objet recupere
+  DestR.y = (SCREEN_HEIGHT / 2) - SrcR.h ;
+  DestR.w = (SrcR.w) * 3; //taille affiche
+  DestR.h = (SrcR.h) * 3;
   //Boucle principale
   while(!terminer)
     {
@@ -121,6 +141,10 @@ int main(int argc, char *argv[])
 	  }
       SDL_RenderPresent(ecran);
     }
+  //Liberation du tableau de sprites pour le personnage
+  free(tab[0]);
+  free(tab);
+  
   //Liberation de l'ecran (renderer)
   SDL_DestroyRenderer(ecran);
   //Quitter SDL
