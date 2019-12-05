@@ -115,3 +115,81 @@ SDL_Texture* charger_image_transparente(const char* nomfichier, SDL_Renderer* re
     return NULL;
   }
 }
+
+char** allouer_tab_2D(int l, int c)
+{
+  int i;
+  char** tab = malloc(sizeof(*tab) * l);
+  tab[0] = (char*) malloc(sizeof(char) * c * l);
+  for(i = 1; i < l ; i++)
+    {
+      tab[i] = tab[i-1] + c;
+    }
+  /* for(i = 0; i<c*l;i++)
+    {
+      tab[0][i] = '';
+      }*/
+  return tab;
+}
+
+void desallouer_tab_2D(char** tab){
+  free(tab[0]);
+  free(tab);
+}
+
+void afficher_tab_2D(char** tab, int l, int c){
+  int i;
+  for(i=0;i<c*l;i++)
+    {
+      printf("%c",tab[0][i]);
+    }
+}
+
+void taille_fichier(const char* nomFichier, int* nbLig, int* nbCol){
+  FILE* fichier = NULL;
+  int resLig, resCol;
+  resLig = 0;
+  resCol = 0;
+  char ch;
+  fichier = fopen(nomFichier, "r");
+  while(!feof(fichier))
+    {
+      ch = fgetc(fichier);
+      if(ch == '\n')
+	{
+	  resLig = resLig + 1;
+	  if(*nbCol <= resCol)
+	    {
+	      *nbCol = resCol;
+	    }
+	  resCol = 0;
+	}
+      else
+	{
+	  resCol = resCol + 1;
+	}
+    }
+  *nbLig = resLig;
+  fclose(fichier);
+}
+
+char** lire_fichier(const char* nomFichier){
+  FILE* fichier = fopen(nomFichier, "r");
+  char ch;
+  int nbLigne, nbCol;
+  nbLigne = 0;
+  nbCol = 0;
+  taille_fichier(nomFichier,&nbLigne,&nbCol);
+  char** resTabl = allouer_tab_2D(nbLigne,nbCol);
+  int i = 0;
+  while(!feof(fichier))
+    {
+      ch = fgetc(fichier);
+      if(ch != '\n')
+	{
+	  resTabl[0][i] = ch;
+	  i++;
+	}
+    }
+  return resTabl;
+}

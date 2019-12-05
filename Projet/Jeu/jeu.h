@@ -40,6 +40,7 @@ char** allouer_tab_2D(int l, int c);
 void desallouer_tab_2D(char** tab);
 void afficher_tab_2D(char** tab, int l, int c);
 void taille_fichier(const char* nomFichier, int* nbLig, int* nbCol);
+char** lire_fichier(const char* nomFichier);
 /*
 SDL_Window* init_sdl(int width, int height);
 void quit_sdl();

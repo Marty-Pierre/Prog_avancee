@@ -144,11 +144,17 @@ int main(int argc, char *argv[])
   //Liberation du tableau de sprites pour le personnage
   free(tab[0]);
   free(tab);
-  
   //Liberation de l'ecran (renderer)
   SDL_DestroyRenderer(ecran);
   //Quitter SDL
   SDL_DestroyWindow(fenetre);
   SDL_Quit();
+
+
+  //iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+  char** tabTest = lire_fichier("Map.txt");
+  afficher_tab_2D(tabTest, 5, 5);
+  desallouer_tab_2D(tabTest);
+  //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   return 0;
 }
