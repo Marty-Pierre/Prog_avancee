@@ -116,36 +116,8 @@ SDL_Texture* charger_image_transparente(const char* nomfichier, SDL_Renderer* re
   }
 
 }
-char** allouer_tab_2D(int l, int c)
-{
-  int i;
-  char** tab = malloc(sizeof(*tab) * l);
-  tab[0] = (char*) malloc(sizeof(char) * c * l);
-  for(i = 1; i < l ; i++)
-    {
-      tab[i] = tab[i-1] + c;
-    }
-  for(i = 0; i<c*l;i++)
-    {
-      tab[0][i] = 'a';
-    }
-  return tab;
-}
+/*
 
-void desallouer_tab_2D(char** tab)
-{
-  free(tab[0]);
-  free(tab);
-}
-
-void afficher_tab_2D(char** tab, int l, int c)
-{
-  int i,j;
-  for(i=0;i<c*l;i++)
-    {
-      printf("%c",tab[0][i]);
-    }
-}
 
 void taille_fichier(const char* nomFichier, int* nbLig, int* nbCol)
 {
@@ -175,7 +147,7 @@ void taille_fichier(const char* nomFichier, int* nbLig, int* nbCol)
   *nbLig = resLig;
   fclose(fichier);
 }
-
+*/
 char** allouer_tab_2D(int l, int c)
 {
   int i;

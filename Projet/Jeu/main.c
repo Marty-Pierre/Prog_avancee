@@ -87,16 +87,51 @@ int main(int argc, char *argv[])
   //Charger l'image
   SDL_Texture* fond = charger_image("image/fond.bmp", ecran);
 
-  //Charger l'image avec la transparence
-  Uint8 r = 0, g = 255, b = 255;
+  //Charger l'image du nain
   SDL_Texture* obj = charger_image("image/Dwarf.bmp", ecran);
 
-  //Creation tab 2d pour perso
-  SDL_Rect** tab = malloc(sizeof(*tab) * 10);
-  tab[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * 100);
+  //Afficher une map a partir d'un fichier txt
+  int mapLig = 0;
+  int mapCol = 0;
+  taille_fichier("map2.txt",&mapLig,&mapCol);
+  char** tabMap = lire_fichier("map2.txt");
+  SDL_Texture* textureMap = charger_image("image/pavage.bmp",ecran);
+
+
+  //tableau de pavage
+  SDL_Rect** tabPavage = malloc(sizeof(tabPavage) * 10);
+  tabPavage[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * 160);
   for(int i = 1; i < 10; i++)
     {
-      tab[i] = tab[i-1] + 10;
+      tabPavage[i] = tabPavage[i-1] + 16;
+    }
+  
+  //remplissage du tableau de pavage
+  for(int i = 0; i < 160; i++)
+    {
+	  tabPavage[0][i].x = 1 *TAILLE_CARRE;
+	  tabPavage[0][i].y = 1 *TAILLE_CARRE;
+	  tabPavage[0][i].w = TAILLE_CARRE;
+	  tabPavage[0][i].h = TAILLE_CARRE;
+    }
+  //SDL_Rect MapR = tabPavage[0][0];
+  SDL_Rect** tabDestPavage = malloc(sizeof(tabDestPavage) * mapLig);
+  tabDestPavage[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * mapCol * mapLig);
+  for(int i = 0; i < mapCol * mapLig; i++)
+    {
+      tabDestPavage[0][i].x = (SCREEN_WIDTH / 2) - TAILLE_CARRE ;
+      tabDestPavage[0][i].y = (SCREEN_HEIGHT / 2) - TAILLE_CARRE;
+      tabDestPavage[0][i].w = (TAILLE_CARRE) * 3;
+      tabDestPavage[0][i].h = (TAILLE_CARRE) * 3;
+    }
+
+  
+  //Creation tab 2d pour perso
+  SDL_Rect** tabPerso = malloc(sizeof(*tabPerso) * 10);
+  tabPerso[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * 100);
+  for(int i = 1; i < 10; i++)
+    {
+      tabPerso[i] = tabPerso[i-1] + 10;
     }
   /*
   SDL_Rect SrcR;
@@ -109,13 +144,13 @@ int main(int argc, char *argv[])
     {
       for(int j = 0; j < 10; j++)
 	{
-	  tab[i][j].x = i * TAILLE_CARRE;
-	  tab[i][j].y = j * TAILLE_CARRE;
-	  tab[i][j].w = TAILLE_CARRE;
-	  tab[i][j].h = TAILLE_CARRE;
+	  tabPerso[i][j].x = i * TAILLE_CARRE;
+	  tabPerso[i][j].y = j * TAILLE_CARRE;
+	  tabPerso[i][j].w = TAILLE_CARRE;
+	  tabPerso[i][j].h = TAILLE_CARRE;
 	}
     }
-  SDL_Rect SrcR = tab[0][0];
+  SDL_Rect SrcR = tabPerso[0][0];
   SDL_Rect DestR;
   DestR.x = (SCREEN_WIDTH / 2) - SrcR.w ; //position de l'objet recupere
   DestR.y = (SCREEN_HEIGHT / 2) - SrcR.h ;
@@ -126,6 +161,10 @@ int main(int argc, char *argv[])
     {
       SDL_RenderClear(ecran);
       SDL_RenderCopy(ecran, fond, NULL, NULL);
+      for(int i = 0; i < mapCol * mapLig; i++)
+	{
+	  SDL_RenderCopy(ecran,textureMap,&tabPavage[1][1],&tabDestPavage[0][0]);
+	}
       SDL_RenderCopy(ecran, obj, &SrcR, &DestR);
       while(SDL_PollEvent( &evenements))
 	switch(evenements.type)
@@ -140,10 +179,10 @@ int main(int argc, char *argv[])
 	      }
 	  }
       SDL_RenderPresent(ecran);
-    }
+      }
   //Liberation du tableau de sprites pour le personnage
-  free(tab[0]);
-  free(tab);
+  free(tabPerso[0]);
+  free(tabPerso);
   //Liberation de l'ecran (renderer)
   SDL_DestroyRenderer(ecran);
   //Quitter SDL
