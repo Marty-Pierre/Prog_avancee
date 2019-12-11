@@ -47,6 +47,10 @@
  */
 #define TAILLE_CARRE 32
 
+/**
+ *\brief gravite
+ */
+
 
 /**
  * \brief La fonction initialise les données du monde du jeu
@@ -87,6 +91,11 @@ int main(int argc, char *argv[])
   //Charger l'image
   SDL_Texture* fond = charger_image("image/fond.bmp", ecran);
 
+  //Creer le perso et l'initailiser
+  perso_t nain;
+    nain.x = 0;
+    nain.y = 0;
+    
   //Charger l'image du nain
   SDL_Texture* obj = charger_image("image/Dwarf.bmp", ecran);
 
@@ -109,22 +118,25 @@ int main(int argc, char *argv[])
   //remplissage du tableau de pavage
   for(int i = 0; i < 160; i++)
     {
-	  tabPavage[0][i].x = 1 *TAILLE_CARRE;
-	  tabPavage[0][i].y = 1 *TAILLE_CARRE;
-	  tabPavage[0][i].w = TAILLE_CARRE;
-	  tabPavage[0][i].h = TAILLE_CARRE;
+      tabPavage[0][i].x = (i % 16 ) *TAILLE_CARRE;
+      tabPavage[0][i].y = (i / 16 ) *TAILLE_CARRE;
+      tabPavage[0][i].w = TAILLE_CARRE;
+      tabPavage[0][i].h = TAILLE_CARRE;
+	
     }
   //SDL_Rect MapR = tabPavage[0][0];
   SDL_Rect** tabDestPavage = malloc(sizeof(tabDestPavage) * mapLig);
   tabDestPavage[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * mapCol * mapLig);
-  for(int i = 0; i < mapCol * mapLig; i++)
+  for(int i = 0; i < mapLig * mapCol; i++)
     {
-      tabDestPavage[0][i].x = (SCREEN_WIDTH / 2) - TAILLE_CARRE ;
-      tabDestPavage[0][i].y = (SCREEN_HEIGHT / 2) - TAILLE_CARRE;
-      tabDestPavage[0][i].w = (TAILLE_CARRE) * 3;
-      tabDestPavage[0][i].h = (TAILLE_CARRE) * 3;
+	  tabDestPavage[0][i].x = (i % mapCol) * 32;
+	  tabDestPavage[0][i].y = (i / mapCol) * 32;
+	  tabDestPavage[0][i].w = TAILLE_CARRE ;
+	  tabDestPavage[0][i].h = TAILLE_CARRE ;
+	
     }
 
+  
   
   //Creation tab 2d pour perso
   SDL_Rect** tabPerso = malloc(sizeof(*tabPerso) * 10);
@@ -152,10 +164,10 @@ int main(int argc, char *argv[])
     }
   SDL_Rect SrcR = tabPerso[0][0];
   SDL_Rect DestR;
-  DestR.x = (SCREEN_WIDTH / 2) - SrcR.w ; //position de l'objet recupere
-  DestR.y = (SCREEN_HEIGHT / 2) - SrcR.h ;
-  DestR.w = (SrcR.w) * 3; //taille affiche
-  DestR.h = (SrcR.h) * 3;
+  DestR.x = nain.x;//(SCREEN_WIDTH / 2) - SrcR.w ; //position de l'objet recupere
+  DestR.y = nain.y;//(SCREEN_HEIGHT / 2) - SrcR.h ;
+  DestR.w = (SrcR.w) * 2; //taille affiche
+  DestR.h = (SrcR.h) * 2;
   //Boucle principale
   while(!terminer)
     {
@@ -163,7 +175,17 @@ int main(int argc, char *argv[])
       SDL_RenderCopy(ecran, fond, NULL, NULL);
       for(int i = 0; i < mapCol * mapLig; i++)
 	{
-	  SDL_RenderCopy(ecran,textureMap,&tabPavage[1][1],&tabDestPavage[0][0]);
+	  switch(tabMap[0][i])
+	    {
+	    case '0':
+	      SDL_RenderCopy(ecran,textureMap,&tabPavage[5][3],&tabDestPavage[0][i]); break;
+	    case '1':
+	      SDL_RenderCopy(ecran,textureMap,&tabPavage[6][11],&tabDestPavage[0][i]); break;
+	    case '2':
+	      SDL_RenderCopy(ecran,textureMap,&tabPavage[0][8],&tabDestPavage[0][i]); break;
+	    case '3':
+	      SDL_RenderCopy(ecran,textureMap,&tabPavage[7][5],&tabDestPavage[0][i]); break;
+	    }
 	}
       SDL_RenderCopy(ecran, obj, &SrcR, &DestR);
       while(SDL_PollEvent( &evenements))
@@ -176,24 +198,39 @@ int main(int argc, char *argv[])
 	      {
 	      case SDLK_ESCAPE:
 		terminer = true; break;
+	      case SDLK_UP:
+		DestR.y = DestR.y - TAILLE_CARRE ; break;
+	      case SDLK_LEFT:
+		DestR.x = DestR.x - TAILLE_CARRE ; break;
+	      case SDLK_RIGHT:
+		DestR.x = DestR.x + TAILLE_CARRE ; break;
+	      case SDLK_DOWN:
+		DestR.y = DestR.y + TAILLE_CARRE ; break;	
+	      case SDLK_z:
+		DestR.y = DestR.y - TAILLE_CARRE ; break;
+	      case SDLK_q:
+		DestR.x = DestR.x - TAILLE_CARRE ; break;
+	      case SDLK_d:
+		DestR.x = DestR.x + TAILLE_CARRE ; break;
+	      case SDLK_s:
+		DestR.y = DestR.y + TAILLE_CARRE ; break;	
+		
 	      }
 	  }
       SDL_RenderPresent(ecran);
       }
-  //Liberation du tableau de sprites pour le personnage
+  //Liberation des tableau utilises
   free(tabPerso[0]);
   free(tabPerso);
+  free(tabPavage[0]);
+  free(tabPavage);
+  free(tabDestPavage[0]);
+  free(tabDestPavage);
+  desallouer_tab_2D(tabMap);
   //Liberation de l'ecran (renderer)
   SDL_DestroyRenderer(ecran);
   //Quitter SDL
   SDL_DestroyWindow(fenetre);
   SDL_Quit();
-
-
-  //iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
-  char** tabTest = lire_fichier("Map.txt");
-  afficher_tab_2D(tabTest, 5, 5);
-  desallouer_tab_2D(tabTest);
-  //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   return 0;
 }

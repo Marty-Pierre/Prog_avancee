@@ -20,9 +20,9 @@ struct terrain_s{
 typedef struct terrain_s terrain_t;
 
 struct perso_s{
-  double hauteur;
-  double largeur;
-  SDL_Surface perso;
+  int x;
+  int y;
+  //SDL_Surface perso;
 };
 typedef struct perso_s perso_t;
 
