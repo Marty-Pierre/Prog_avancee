@@ -52,16 +52,11 @@
  * \brief La fonction initialise les données du monde du jeu
  * \param world les données du monde
  */
-/*
-void init_data(world_t * world){
-  //int i;
-  world->background = load_image("image/fond.bmp");
-  
-}
-*/
+
 
 int main(int argc, char *argv[])
 {
+  bool start = false;
   SDL_Window* fenetre;
   SDL_Event evenements;
   bool terminer = false;
@@ -84,8 +79,24 @@ int main(int argc, char *argv[])
   SDL_Renderer* ecran;
   ecran = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED);
 
+
+  //Creation de message pour le jeu
+  TTF_Init();
+  TTF_Font* police = TTF_OpenFont("./arial.ttf",65);
+  SDL_Color color = {10,25,125,0};
+  SDL_Surface* TextSurf = TTF_RenderText_Solid(police,"Appuyez sur K pour jouer",color) ;
+  SDL_Texture* Text = SDL_CreateTextureFromSurface(ecran,TextSurf);
+  //Ou sera affiche le texte et a quelle dimensions
+  SDL_Rect text_pos;
+  text_pos.x = (SCREEN_WIDTH - 500) /2;
+  text_pos.y = (SCREEN_HEIGHT - 200) /2;
+  text_pos.w = 500;
+  text_pos.h = 200;
+  
+  
+
   //Charger l'image
-  //SDL_Texture* fond = charger_image("image/fond.bmp", ecran);
+  SDL_Texture* fond = charger_image("image/fond.bmp", ecran);
 
   //Creer le perso et l'initailiser
   perso_t nain;
@@ -164,25 +175,30 @@ int main(int argc, char *argv[])
   //Boucle principale
   while(!terminer)
     {
-      
       SDL_RenderClear(ecran);
-      //SDL_RenderCopy(ecran,fond,NULL,NULL);
-      
-      for(int i = 0; i < mapCol * mapLig; i++)
+      if(start)
 	{
-	  switch(tabMap[0][i])
+	  for(int i = 0; i < mapCol * mapLig; i++)
 	    {
-	    case '0':
-	      SDL_RenderCopy(ecran,textureMap,&tabPavage[5][3],&tabDestPavage[0][i]); break;
-	    case '1':
-	      SDL_RenderCopy(ecran,textureMap,&tabPavage[6][11],&tabDestPavage[0][i]); break;
-	    case '2':
-	      SDL_RenderCopy(ecran,textureMap,&tabPavage[0][8],&tabDestPavage[0][i]); break;
-	    case '3':
-	      SDL_RenderCopy(ecran,textureMap,&tabPavage[7][5],&tabDestPavage[0][i]); break;
+	      switch(tabMap[0][i])
+		{
+		case '0':
+		  SDL_RenderCopy(ecran,textureMap,&tabPavage[5][3],&tabDestPavage[0][i]); break;
+		case '1':
+		  SDL_RenderCopy(ecran,textureMap,&tabPavage[6][11],&tabDestPavage[0][i]); break;
+		case '2':
+		  SDL_RenderCopy(ecran,textureMap,&tabPavage[0][8],&tabDestPavage[0][i]); break;
+		case '3':
+		  SDL_RenderCopy(ecran,textureMap,&tabPavage[7][5],&tabDestPavage[0][i]); break;
+		}
 	    }
+	  SDL_RenderCopy(ecran, obj, &SrcR, &(nain.DestR));
 	}
-      SDL_RenderCopy(ecran, obj, &SrcR, &(nain.DestR));
+      else
+	{
+	  SDL_RenderCopy(ecran,fond,NULL,NULL);
+	  SDL_RenderCopy(ecran,Text,NULL,&text_pos);
+	}
       while(SDL_PollEvent(&evenements)){
 	switch(evenements.type)
 	  {
@@ -193,52 +209,59 @@ int main(int argc, char *argv[])
 	      {
 	      case SDLK_ESCAPE:
 		terminer = true; break;
-	      case SDLK_UP:
-		nain.vy = -5;
-		nain.DestR.y = nain.DestR.y + nain.vy;
-		colision_haut(&nain, tabMap);
-		if(nain.vy != 1){
-		  nain.vy = nain.vy + 1;
+		if(!start){
+		case SDLK_UP:
+		  nain.vy = -5;
+		  nain.DestR.y = nain.DestR.y + nain.vy;
+		  colision_haut(&nain, tabMap);
+		  if(nain.vy != 1){
+		    nain.vy = nain.vy + 1;
 		}
-		break;
-	      case SDLK_LEFT:
-		nain.vx = -32;
-		nain.DestR.x = nain.DestR.x + nain.vx;
-		colision_gauche(&nain, tabMap);
-		nain.vx = 0;break;
-	      case SDLK_RIGHT:
-		nain.vx = 32;
-		nain.DestR.x = nain.DestR.x + nain.vx;
-		colision_droit(&nain, tabMap);
-		nain.vx = 0;break;
-	      case SDLK_DOWN:
-		nain.DestR.y = nain.DestR.y + TAILLE_CARRE ; break;	
-	      case SDLK_z:
-		nain.vy = -5;
-		nain.DestR.y = nain.DestR.y + nain.vy;
-		colision_haut(&nain, tabMap);
-		if(nain.vy != 1){
-		  nain.vy = nain.vy + 1;
+		  break;
+		case SDLK_LEFT:
+		  nain.vx = -32;
+		  nain.DestR.x = nain.DestR.x + nain.vx;
+		  colision_gauche(&nain, tabMap);
+		  nain.vx = 0;break;
+		case SDLK_RIGHT:
+		  nain.vx = 32;
+		  nain.DestR.x = nain.DestR.x + nain.vx;
+		  colision_droit(&nain, tabMap);
+		  nain.vx = 0;break;
+		case SDLK_DOWN:
+		  nain.DestR.y = nain.DestR.y + TAILLE_CARRE ; break;	
+		case SDLK_z:
+		  nain.vy = -5;
+		  nain.DestR.y = nain.DestR.y + nain.vy;
+		  colision_haut(&nain, tabMap);
+		  if(nain.vy != 1){
+		    nain.vy = nain.vy + 1;
+		  }
+		  break;
+		case SDLK_q:
+		  nain.vx = -32;
+		  nain.DestR.x = nain.DestR.x + nain.vx;
+		  colision_gauche(&nain, tabMap);
+		  nain.vx = 0;break;
+		case SDLK_d:
+		  nain.vx = 32;
+		  nain.DestR.x = nain.DestR.x + nain.vx;
+		  colision_droit(&nain, tabMap);
+		  nain.vx = 0;break;
+		case SDLK_s:
+		  nain.DestR.y = nain.DestR.y + TAILLE_CARRE ; break;	
 		}
-		break;
-	      case SDLK_q:
-		nain.vx = -32;
-		nain.DestR.x = nain.DestR.x + nain.vx;
-		colision_gauche(&nain, tabMap);
-		nain.vx = 0;break;
-	      case SDLK_d:
-		nain.vx = 32;
-		nain.DestR.x = nain.DestR.x + nain.vx;
-		colision_droit(&nain, tabMap);
-		nain.vx = 0;break;
-	      case SDLK_s:
-		nain.DestR.y = nain.DestR.y + TAILLE_CARRE ; break;	
+		else // Si le joueur est a l'ecran de titre
+		  {
+		    case SDLK_k:
+		      start = true; break;
+		  }
 		
 	      }break;
 	  }
       }
-	
-	
+      
+      //Permet de faire tomber le personnage, comme si il y a avait de la gravite
       nain.DestR.y = nain.DestR.y + nain.vy;
       colision_bas(&nain,tabMap);
       if(nain.vy != 1){
@@ -246,6 +269,7 @@ int main(int argc, char *argv[])
       }
       SDL_RenderPresent(ecran);
     }
+
   //Liberation des tableau utilises
   free(tabPerso[0]);
   free(tabPerso);
@@ -254,6 +278,9 @@ int main(int argc, char *argv[])
   free(tabDestPavage[0]);
   free(tabDestPavage);
   desallouer_tab_2D(tabMap);
+  //Quitter ttf
+  TTF_CloseFont(police);
+  TTF_Quit();
   //Liberation de l'ecran (renderer)
   SDL_DestroyRenderer(ecran);
   //Quitter SDL

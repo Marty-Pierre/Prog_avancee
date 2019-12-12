@@ -2,6 +2,7 @@
 #define __jeu_h__
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 //#include "SDL2_image"
 #include <stdbool.h>
 #include <stdio.h>

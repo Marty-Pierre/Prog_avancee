@@ -150,7 +150,6 @@ void colision_haut(perso_t* pers, char** map){
   if(((map[yPers][xPers] == '0') || (map[yPers][xPers] == '2')) && ((map[yPers][xPers + 1] == '0') || (map[yPers][xPers + 1] == '2')))
     {
       pers->DestR.y =  pers->DestR.y + 1;
-      printf("HAUT %i ,%i ,%c\n",xPers,yPers,map[yPers][xPers]);
       colision_bas(pers,map);
       colision_haut(pers,map);
     }
@@ -162,8 +161,6 @@ void colision_bas(perso_t* pers, char** map){
   if((map[yPers + 1][xPers] == '0') || (map[yPers + 1][xPers] == '2')) //|| (map[yPers+1][xPers+1] == '0') || (map[yPers+1][xPers+1] == '2'))
     {
       pers->DestR.y =  pers->DestR.y - 1;
-      printf("BAS %i ,%i ,%c\n",xPers,yPers+1,map[yPers+1][xPers]);
-      printf("BAS %i ,%i ,%c\n",xPers+1,yPers+1,map[yPers+1][xPers+1]);
       colision_haut(pers,map);
       colision_bas(pers,map);
     }
@@ -175,8 +172,6 @@ void colision_gauche(perso_t* pers, char** map){
   if(((map[yPers][xPers] == '0') || (map[yPers][xPers] == '2')) && ((map[yPers+ 1][xPers] == '0') || (map[yPers + 1][xPers] == '2')))
     {
       pers->DestR.x = pers->DestR.x + 1;
-      printf("GAUCHE %i ,%i ,%c\n",xPers,yPers,map[yPers][xPers]);
-      printf("GAUCHE %i ,%i ,%c\n",xPers,yPers+1,map[yPers+1][xPers]);
       colision_droit(pers,map);
       colision_gauche(pers,map);
     }
@@ -188,8 +183,6 @@ void colision_droit(perso_t* pers, char** map){
   if(((map[yPers][xPers + 1] == '0') || (map[yPers][xPers + 1] == '2')) && ((map[yPers + 1][xPers+1] == '0') || (map[yPers+1][xPers+1] == '2')))
     {
       pers->DestR.x = pers->DestR.x - 1;
-      printf("DROIT %i ,%i ,%c\n",xPers+1,yPers,map[yPers][xPers+1]);
-      printf("DROIT %i ,%i ,%c\n",xPers+1,yPers+1,map[yPers+1][xPers+1]);
       colision_gauche(pers,map);
       colision_droit(pers,map);
     }
