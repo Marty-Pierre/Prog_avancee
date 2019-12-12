@@ -47,10 +47,6 @@
  */
 #define TAILLE_CARRE 32
 
-/**
- *\brief gravite
- */
-
 
 /**
  * \brief La fonction initialise les données du monde du jeu
@@ -77,7 +73,7 @@ int main(int argc, char *argv[])
     }
 
   //Creer la fenetre
-  fenetre = SDL_CreateWindow("Fenetre SDL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
+  fenetre = SDL_CreateWindow("Fenetre SDL", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT,SDL_WINDOW_RESIZABLE);
   if (fenetre == NULL) //En cas d'erreur
     {
       printf("Erreur de la creation d'une fenetre: %s",SDL_GetError());
@@ -89,24 +85,24 @@ int main(int argc, char *argv[])
   ecran = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED);
 
   //Charger l'image
-  SDL_Texture* fond = charger_image("image/fond.bmp", ecran);
+  //SDL_Texture* fond = charger_image("image/fond.bmp", ecran);
 
   //Creer le perso et l'initailiser
   perso_t nain;
-    nain.x = 0;
-    nain.y = 0;
+  nain.vx = 0;
+  nain.vy = 1;
     
   //Charger l'image du nain
   SDL_Texture* obj = charger_image("image/Dwarf.bmp", ecran);
-
+  
   //Afficher une map a partir d'un fichier txt
   int mapLig = 0;
   int mapCol = 0;
   taille_fichier("map2.txt",&mapLig,&mapCol);
   char** tabMap = lire_fichier("map2.txt");
   SDL_Texture* textureMap = charger_image("image/pavage.bmp",ecran);
-
-
+  
+  
   //tableau de pavage
   SDL_Rect** tabPavage = malloc(sizeof(tabPavage) * 10);
   tabPavage[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * 160);
@@ -124,7 +120,8 @@ int main(int argc, char *argv[])
       tabPavage[0][i].h = TAILLE_CARRE;
 	
     }
-  //SDL_Rect MapR = tabPavage[0][0];
+
+  //tableau qui lie la map txt avec l'ecran
   SDL_Rect** tabDestPavage = malloc(sizeof(tabDestPavage) * mapLig);
   tabDestPavage[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * mapCol * mapLig);
   for(int i = 0; i < mapLig * mapCol; i++)
@@ -145,13 +142,7 @@ int main(int argc, char *argv[])
     {
       tabPerso[i] = tabPerso[i-1] + 10;
     }
-  /*
-  SDL_Rect SrcR;
-  SrcR.x = 0;
-  SrcR.y = 0;
-  SrcR.w = 32; //Largeur de l'objet a recuperer
-  SrcR.h = 32; //Hauteur de l'objet a recuperer
-  */
+
   for(int i = 0; i < 10; i++)
     {
       for(int j = 0; j < 10; j++)
@@ -163,16 +154,20 @@ int main(int argc, char *argv[])
 	}
     }
   SDL_Rect SrcR = tabPerso[0][0];
-  SDL_Rect DestR;
-  DestR.x = nain.x;//(SCREEN_WIDTH / 2) - SrcR.w ; //position de l'objet recupere
-  DestR.y = nain.y;//(SCREEN_HEIGHT / 2) - SrcR.h ;
-  DestR.w = (SrcR.w) * 2; //taille affiche
-  DestR.h = (SrcR.h) * 2;
+  
+  nain.DestR.x = 100; //Position de depart du nain
+  nain.DestR.y = 170;
+  nain.DestR.w = (SrcR.w); //taille affiche
+  nain.DestR.h = (SrcR.h);
+
+  
   //Boucle principale
   while(!terminer)
     {
+      
       SDL_RenderClear(ecran);
-      SDL_RenderCopy(ecran, fond, NULL, NULL);
+      //SDL_RenderCopy(ecran,fond,NULL,NULL);
+      
       for(int i = 0; i < mapCol * mapLig; i++)
 	{
 	  switch(tabMap[0][i])
@@ -187,8 +182,8 @@ int main(int argc, char *argv[])
 	      SDL_RenderCopy(ecran,textureMap,&tabPavage[7][5],&tabDestPavage[0][i]); break;
 	    }
 	}
-      SDL_RenderCopy(ecran, obj, &SrcR, &DestR);
-      while(SDL_PollEvent( &evenements))
+      SDL_RenderCopy(ecran, obj, &SrcR, &(nain.DestR));
+      while(SDL_PollEvent(&evenements)){
 	switch(evenements.type)
 	  {
 	  case SDL_QUIT:
@@ -199,26 +194,58 @@ int main(int argc, char *argv[])
 	      case SDLK_ESCAPE:
 		terminer = true; break;
 	      case SDLK_UP:
-		DestR.y = DestR.y - TAILLE_CARRE ; break;
+		nain.vy = -5;
+		nain.DestR.y = nain.DestR.y + nain.vy;
+		colision_haut(&nain, tabMap);
+		if(nain.vy != 1){
+		  nain.vy = nain.vy + 1;
+		}
+		break;
 	      case SDLK_LEFT:
-		DestR.x = DestR.x - TAILLE_CARRE ; break;
+		nain.vx = -32;
+		nain.DestR.x = nain.DestR.x + nain.vx;
+		colision_gauche(&nain, tabMap);
+		nain.vx = 0;break;
 	      case SDLK_RIGHT:
-		DestR.x = DestR.x + TAILLE_CARRE ; break;
+		nain.vx = 32;
+		nain.DestR.x = nain.DestR.x + nain.vx;
+		colision_droit(&nain, tabMap);
+		nain.vx = 0;break;
 	      case SDLK_DOWN:
-		DestR.y = DestR.y + TAILLE_CARRE ; break;	
+		nain.DestR.y = nain.DestR.y + TAILLE_CARRE ; break;	
 	      case SDLK_z:
-		DestR.y = DestR.y - TAILLE_CARRE ; break;
+		nain.vy = -5;
+		nain.DestR.y = nain.DestR.y + nain.vy;
+		colision_haut(&nain, tabMap);
+		if(nain.vy != 1){
+		  nain.vy = nain.vy + 1;
+		}
+		break;
 	      case SDLK_q:
-		DestR.x = DestR.x - TAILLE_CARRE ; break;
+		nain.vx = -32;
+		nain.DestR.x = nain.DestR.x + nain.vx;
+		colision_gauche(&nain, tabMap);
+		nain.vx = 0;break;
 	      case SDLK_d:
-		DestR.x = DestR.x + TAILLE_CARRE ; break;
+		nain.vx = 32;
+		nain.DestR.x = nain.DestR.x + nain.vx;
+		colision_droit(&nain, tabMap);
+		nain.vx = 0;break;
 	      case SDLK_s:
-		DestR.y = DestR.y + TAILLE_CARRE ; break;	
+		nain.DestR.y = nain.DestR.y + TAILLE_CARRE ; break;	
 		
-	      }
+	      }break;
 	  }
-      SDL_RenderPresent(ecran);
       }
+	
+	
+      nain.DestR.y = nain.DestR.y + nain.vy;
+      colision_bas(&nain,tabMap);
+      if(nain.vy != 1){
+	nain.vy = nain.vy + 1;
+      }
+      SDL_RenderPresent(ecran);
+    }
   //Liberation des tableau utilises
   free(tabPerso[0]);
   free(tabPerso);

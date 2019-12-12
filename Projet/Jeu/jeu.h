@@ -20,8 +20,9 @@ struct terrain_s{
 typedef struct terrain_s terrain_t;
 
 struct perso_s{
-  int x;
-  int y;
+  SDL_Rect DestR;
+  int vx;
+  int vy;
   //SDL_Surface perso;
 };
 typedef struct perso_s perso_t;
@@ -41,9 +42,13 @@ void desallouer_tab_2D(char** tab);
 void afficher_tab_2D(char** tab, int l, int c);
 void taille_fichier(const char* nomFichier, int* nbLig, int* nbCol);
 char** lire_fichier(const char* nomFichier);
+void colision_haut(perso_t* pers, char** map);
+void colision_bas(perso_t* pers, char** map);
+void colision_gauche(perso_t* pers, char** map);
+void colision_droit(perso_t* pers, char** map);
 /*
 SDL_Window* init_sdl(int width, int height);
-void quit_sdl();
+void quit_sdl();hhhh
 SDL_Surface* load_image(char path[]);
 
 

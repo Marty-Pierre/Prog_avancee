@@ -44,54 +44,7 @@
  * \return la surface SDL correspondant à l'écran de jeu
  */
 
-/*SDL_Window* init_sdl(int width, int height){
-    SDL_Window* screen = NULL;
-    
-    SDL_Init( SDL_INIT_VIDEO );
-    
-    //Set up screen
-    //screen = SDL_SetVideoMode( width, height, 16, SDL_SWSURFACE| SDL_DOUBLEBUF | SDL_ANYFORMAT );
-    screen = SDL_CreateWindow("Ma fenêtre de jeu", 
-			      SDL_WINDOWPOS_UNDEFINED, 
-			      SDL_WINDOWPOS_UNDEFINED, 
-			      width, height, 
-			      SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
-    return screen;
-}
 
-/** 
- *\brief La fonction permet de quitter la SDL
- * en supprimant notamment la surface correspondant à l'écran de jeu
- 
-
-void quit_sdl(){
-    SDL_Quit();
-}
-
-/**
- * \brief La fonction charge une image  et renvoie la surface SDL optimisée correspondante
- * \param path est le chemin du fichier image. Le fichier doit être obligatoirement du BMP.
- * \return la surface SDL contenant l'image. Elle renvoie NULL si le chargement a échoué
- * (ex. le fichier path n'existe pas)
- 
-
-SDL_Surface* load_image(char path[]){
-    SDL_Surface* loadedImage = NULL;
-    
-    SDL_Surface* optimizedImage = NULL;
-    loadedImage = SDL_LoadBMP( path);
-    
-    if( loadedImage != NULL ) {
-        optimizedImage = SDL_DisplayFormat( loadedImage );
-        SDL_FreeSurface( loadedImage );
-    }
-    else{
-        fprintf(stderr,"Image %s cannot be loaded!\n",path);
-    }
-    return optimizedImage;
-    
-}
-*/
 
 //Mettre en place un contexte de rendu de l'ecran
 
@@ -116,38 +69,7 @@ SDL_Texture* charger_image_transparente(const char* nomfichier, SDL_Renderer* re
   }
 
 }
-/*
 
-
-void taille_fichier(const char* nomFichier, int* nbLig, int* nbCol)
-{
-  FILE* fichier = NULL;
-  int resLig, resCol;
-  resLig = 0;
-  resCol = 0;
-  char ch;
-  fichier = fopen(nomFichier, "r");
-  while(!feof(fichier))
-    {
-      ch = fgetc(fichier);
-      if(ch == '\n')
-	{
-	  resLig = resLig + 1;
-	  if(*nbCol <= resCol)
-	    {
-	      *nbCol = resCol;
-	    }
-	  resCol = 0;
-	}
-      else
-	{
-	  resCol = resCol + 1;
-	}
-    }
-  *nbLig = resLig;
-  fclose(fichier);
-}
-*/
 char** allouer_tab_2D(int l, int c)
 {
   int i;
@@ -157,10 +79,6 @@ char** allouer_tab_2D(int l, int c)
     {
       tab[i] = tab[i-1] + c;
     }
-  /* for(i = 0; i<c*l;i++)
-    {
-      tab[0][i] = '';
-      }*/
   return tab;
 }
 
@@ -225,3 +143,55 @@ char** lire_fichier(const char* nomFichier){
     }
   return resTabl;
 }
+
+void colision_haut(perso_t* pers, char** map){
+  int xPers = pers->DestR.x / TAILLE_CARRE;
+  int yPers = pers->DestR.y / TAILLE_CARRE;
+  if(((map[yPers][xPers] == '0') || (map[yPers][xPers] == '2')) && ((map[yPers][xPers + 1] == '0') || (map[yPers][xPers + 1] == '2')))
+    {
+      pers->DestR.y =  pers->DestR.y + 1;
+      printf("HAUT %i ,%i ,%c\n",xPers,yPers,map[yPers][xPers]);
+      colision_bas(pers,map);
+      colision_haut(pers,map);
+    }
+}
+
+void colision_bas(perso_t* pers, char** map){
+  int xPers = pers->DestR.x / TAILLE_CARRE;
+  int yPers = pers->DestR.y / TAILLE_CARRE;
+  if((map[yPers + 1][xPers] == '0') || (map[yPers + 1][xPers] == '2')) //|| (map[yPers+1][xPers+1] == '0') || (map[yPers+1][xPers+1] == '2'))
+    {
+      pers->DestR.y =  pers->DestR.y - 1;
+      printf("BAS %i ,%i ,%c\n",xPers,yPers+1,map[yPers+1][xPers]);
+      printf("BAS %i ,%i ,%c\n",xPers+1,yPers+1,map[yPers+1][xPers+1]);
+      colision_haut(pers,map);
+      colision_bas(pers,map);
+    }
+}
+
+void colision_gauche(perso_t* pers, char** map){
+  int xPers = pers->DestR.x / TAILLE_CARRE;
+  int yPers = pers->DestR.y / TAILLE_CARRE;
+  if(((map[yPers][xPers] == '0') || (map[yPers][xPers] == '2')) && ((map[yPers+ 1][xPers] == '0') || (map[yPers + 1][xPers] == '2')))
+    {
+      pers->DestR.x = pers->DestR.x + 1;
+      printf("GAUCHE %i ,%i ,%c\n",xPers,yPers,map[yPers][xPers]);
+      printf("GAUCHE %i ,%i ,%c\n",xPers,yPers+1,map[yPers+1][xPers]);
+      colision_droit(pers,map);
+      colision_gauche(pers,map);
+    }
+}
+
+void colision_droit(perso_t* pers, char** map){
+  int xPers = pers->DestR.x / TAILLE_CARRE;
+  int yPers = pers->DestR.y / TAILLE_CARRE;
+  if(((map[yPers][xPers + 1] == '0') || (map[yPers][xPers + 1] == '2')) && ((map[yPers + 1][xPers+1] == '0') || (map[yPers+1][xPers+1] == '2')))
+    {
+      pers->DestR.x = pers->DestR.x - 1;
+      printf("DROIT %i ,%i ,%c\n",xPers+1,yPers,map[yPers][xPers+1]);
+      printf("DROIT %i ,%i ,%c\n",xPers+1,yPers+1,map[yPers+1][xPers+1]);
+      colision_gauche(pers,map);
+      colision_droit(pers,map);
+    }
+}
+  
