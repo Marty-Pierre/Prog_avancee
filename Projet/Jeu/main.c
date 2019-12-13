@@ -84,7 +84,9 @@ int main(int argc, char *argv[])
   TTF_Init();
   TTF_Font* police = TTF_OpenFont("./arial.ttf",65);
   SDL_Color color = {10,25,125,0};
-  SDL_Surface* TextSurf = TTF_RenderText_Solid(police,"Appuyez sur le clic gauche de la souris pour jouer",color) ;
+
+  SDL_Surface* TextSurf = TTF_RenderText_Solid(police,"Appuyez sur C pour jouer",color) ;
+
   SDL_Texture* Text = SDL_CreateTextureFromSurface(ecran,TextSurf);
   //Ou sera affiche le texte et a quelle dimensions
   SDL_Rect text_pos;
@@ -97,6 +99,9 @@ int main(int argc, char *argv[])
 
   //Charger l'image
   SDL_Texture* fond = charger_image("image/fond.bmp", ecran);
+
+  //Charger l'image de fin
+  SDL_Texture* youwin = charger_image("image/win.bmp",ecran);
 
   //Creer le perso et l'initailiser
   perso_t nain;
@@ -143,7 +148,6 @@ int main(int argc, char *argv[])
 	  tabDestPavage[0][i].h = TAILLE_CARRE ;
 	
     }
-  printf("%i, %i \n",mapLig, mapCol);
 
   
   
@@ -167,11 +171,13 @@ int main(int argc, char *argv[])
     }
   SDL_Rect SrcR = tabPerso[0][0];
   
-  nain.DestR.x = 100; //Position de depart du nain
-  nain.DestR.y = 170;
+  nain.DestR.x = 48; //Position de depart du nain
+  nain.DestR.y = 480;
   nain.DestR.w = TAILLE_CARRE;//(SrcR.w); //taille affiche
   nain.DestR.h = TAILLE_CARRE;//(SrcR.h);
 
+  int xPers;
+  int yPers;
   
   //Boucle principale
   while(!terminer)
@@ -254,13 +260,14 @@ int main(int argc, char *argv[])
 		}
 		else // Si le joueur est a l'ecran de titre
 		  {
-		    case SDLK_k:
+		    case SDLK_c:
 		      start = true; break;
 		  }
 		
 	      }break;
 	  }
       }
+    
       
       //Permet de faire tomber le personnage, comme si il y a avait de la gravite
       nain.DestR.y = nain.DestR.y + nain.vy;
@@ -268,6 +275,17 @@ int main(int argc, char *argv[])
       if(nain.vy != 1){
 	nain.vy = nain.vy + 1;
       }
+      xPers = nain.DestR.x / TAILLE_CARRE;
+      yPers = nain.DestR.y / TAILLE_CARRE;
+      if((tabMap[yPers][xPers + 1] == '3') || (tabMap[yPers + 1][xPers+1] == '3')){
+	terminer = true;
+	SDL_RenderClear(ecran);
+	SDL_RenderCopy(ecran,youwin,NULL,NULL);
+	SDL_RenderPresent(ecran);
+	
+	SDL_Delay(5000);
+      }
+	
       SDL_RenderPresent(ecran);
     }
 

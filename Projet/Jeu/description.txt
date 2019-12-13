@@ -1,0 +1,7 @@
+LARCHER Alexis 
+MARTY Pierre
+
+Notre Projet : Le but de notre projet etait de creer un jeu de style platformer 2D.
+Notre Personnage se deplace dans les 4 directions, il peut sauter et traverser vers le bas les blocs de bois.
+Le but du jeu est d'arriver a la fin du niveau. Ce jeu raconte l'histoire du nainventurier Barog.
+Notre map se compose de 4 types de blocs différents, certains bloc que nous pouvons traverser et d'autre non.
