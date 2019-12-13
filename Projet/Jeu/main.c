@@ -15,12 +15,12 @@
 /**
  * \brief Largeur de l'écran de jeu
  */
-#define SCREEN_WIDTH 1000
+#define SCREEN_WIDTH 1500 //
 
 /**
  * \brief Hauteur de l'écran de jeu
  */
-#define SCREEN_HEIGHT 700
+#define SCREEN_HEIGHT 900 //
 
 /**
  * \brief Largeur du terrain
@@ -45,7 +45,7 @@
 /**
  * \brief Taille de chaque carre de terrain
  */
-#define TAILLE_CARRE 32
+#define TAILLE_CARRE 16
 
 
 /**
@@ -84,13 +84,13 @@ int main(int argc, char *argv[])
   TTF_Init();
   TTF_Font* police = TTF_OpenFont("./arial.ttf",65);
   SDL_Color color = {10,25,125,0};
-  SDL_Surface* TextSurf = TTF_RenderText_Solid(police,"Appuyez sur K pour jouer",color) ;
+  SDL_Surface* TextSurf = TTF_RenderText_Solid(police,"Appuyez sur le clic gauche de la souris pour jouer",color) ;
   SDL_Texture* Text = SDL_CreateTextureFromSurface(ecran,TextSurf);
   //Ou sera affiche le texte et a quelle dimensions
   SDL_Rect text_pos;
-  text_pos.x = (SCREEN_WIDTH - 500) /2;
-  text_pos.y = (SCREEN_HEIGHT - 200) /2;
-  text_pos.w = 500;
+  text_pos.x = (SCREEN_WIDTH - 900) /2;
+  text_pos.y = (SCREEN_HEIGHT + 400) /2;
+  text_pos.w = 1000;
   text_pos.h = 200;
   
   
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
   //Creer le perso et l'initailiser
   perso_t nain;
   nain.vx = 0;
-  nain.vy = 1;
+  nain.vy = 1; //1 car on veut que notre personnage soit soumi a la gravité
     
   //Charger l'image du nain
   SDL_Texture* obj = charger_image("image/Dwarf.bmp", ecran);
@@ -125,10 +125,10 @@ int main(int argc, char *argv[])
   //remplissage du tableau de pavage
   for(int i = 0; i < 160; i++)
     {
-      tabPavage[0][i].x = (i % 16 ) *TAILLE_CARRE;
-      tabPavage[0][i].y = (i / 16 ) *TAILLE_CARRE;
-      tabPavage[0][i].w = TAILLE_CARRE;
-      tabPavage[0][i].h = TAILLE_CARRE;
+      tabPavage[0][i].x = (i % 16 ) * 32;
+      tabPavage[0][i].y = (i / 16 ) * 32;
+      tabPavage[0][i].w = 32;
+      tabPavage[0][i].h = 32;
 	
     }
 
@@ -137,12 +137,13 @@ int main(int argc, char *argv[])
   tabDestPavage[0] = (SDL_Rect*)malloc(sizeof(SDL_Rect) * mapCol * mapLig);
   for(int i = 0; i < mapLig * mapCol; i++)
     {
-	  tabDestPavage[0][i].x = (i % mapCol) * 32;
-	  tabDestPavage[0][i].y = (i / mapCol) * 32;
+	  tabDestPavage[0][i].x = (i % mapCol) * TAILLE_CARRE;
+	  tabDestPavage[0][i].y = (i / mapCol) *TAILLE_CARRE;
 	  tabDestPavage[0][i].w = TAILLE_CARRE ;
 	  tabDestPavage[0][i].h = TAILLE_CARRE ;
 	
     }
+  printf("%i, %i \n",mapLig, mapCol);
 
   
   
@@ -158,18 +159,18 @@ int main(int argc, char *argv[])
     {
       for(int j = 0; j < 10; j++)
 	{
-	  tabPerso[i][j].x = i * TAILLE_CARRE;
-	  tabPerso[i][j].y = j * TAILLE_CARRE;
-	  tabPerso[i][j].w = TAILLE_CARRE;
-	  tabPerso[i][j].h = TAILLE_CARRE;
+	  tabPerso[i][j].x = i * 32;
+	  tabPerso[i][j].y = j * 32;
+	  tabPerso[i][j].w = 32;
+	  tabPerso[i][j].h = 32;
 	}
     }
   SDL_Rect SrcR = tabPerso[0][0];
   
   nain.DestR.x = 100; //Position de depart du nain
   nain.DestR.y = 170;
-  nain.DestR.w = (SrcR.w); //taille affiche
-  nain.DestR.h = (SrcR.h);
+  nain.DestR.w = TAILLE_CARRE;//(SrcR.w); //taille affiche
+  nain.DestR.h = TAILLE_CARRE;//(SrcR.h);
 
   
   //Boucle principale
@@ -211,7 +212,7 @@ int main(int argc, char *argv[])
 		terminer = true; break;
 		if(!start){
 		case SDLK_UP:
-		  nain.vy = -5;
+		  nain.vy = -2;
 		  nain.DestR.y = nain.DestR.y + nain.vy;
 		  colision_haut(&nain, tabMap);
 		  if(nain.vy != 1){
@@ -219,19 +220,19 @@ int main(int argc, char *argv[])
 		}
 		  break;
 		case SDLK_LEFT:
-		  nain.vx = -32;
+		  nain.vx = - TAILLE_CARRE;
 		  nain.DestR.x = nain.DestR.x + nain.vx;
 		  colision_gauche(&nain, tabMap);
 		  nain.vx = 0;break;
 		case SDLK_RIGHT:
-		  nain.vx = 32;
+		  nain.vx = TAILLE_CARRE;
 		  nain.DestR.x = nain.DestR.x + nain.vx;
 		  colision_droit(&nain, tabMap);
 		  nain.vx = 0;break;
 		case SDLK_DOWN:
 		  nain.DestR.y = nain.DestR.y + TAILLE_CARRE ; break;	
 		case SDLK_z:
-		  nain.vy = -5;
+		  nain.vy = -2;
 		  nain.DestR.y = nain.DestR.y + nain.vy;
 		  colision_haut(&nain, tabMap);
 		  if(nain.vy != 1){
@@ -239,12 +240,12 @@ int main(int argc, char *argv[])
 		  }
 		  break;
 		case SDLK_q:
-		  nain.vx = -32;
+		  nain.vx = - TAILLE_CARRE;
 		  nain.DestR.x = nain.DestR.x + nain.vx;
 		  colision_gauche(&nain, tabMap);
 		  nain.vx = 0;break;
 		case SDLK_d:
-		  nain.vx = 32;
+		  nain.vx = TAILLE_CARRE;
 		  nain.DestR.x = nain.DestR.x + nain.vx;
 		  colision_droit(&nain, tabMap);
 		  nain.vx = 0;break;

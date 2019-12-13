@@ -13,7 +13,7 @@
 #define NB_ELEM_HAUTEUR_TERRAIN 10
 #define NB_ELEM_LARGEUR_PERSO 95
 #define NB_ELEM_HAUTEUR_PERSO 125
-#define TAILLE_CARRE 32
+#define TAILLE_CARRE 16
 
 struct terrain_s{
   SDL_Surface* terrain;

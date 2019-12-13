@@ -33,7 +33,7 @@
 /**
  * \brief Taille de chaque carre de terrain
  */
-#define TAILLE_CARRE 32
+#define TAILLE_CARRE 16
 
 
 /**
@@ -150,7 +150,7 @@ void colision_haut(perso_t* pers, char** map){
   if(((map[yPers][xPers] == '0') || (map[yPers][xPers] == '2')) && ((map[yPers][xPers + 1] == '0') || (map[yPers][xPers + 1] == '2')))
     {
       pers->DestR.y =  pers->DestR.y + 1;
-      colision_bas(pers,map);
+      //colision_bas(pers,map);
       colision_haut(pers,map);
     }
 }
@@ -158,10 +158,10 @@ void colision_haut(perso_t* pers, char** map){
 void colision_bas(perso_t* pers, char** map){
   int xPers = pers->DestR.x / TAILLE_CARRE;
   int yPers = pers->DestR.y / TAILLE_CARRE;
-  if((map[yPers + 1][xPers] == '0') || (map[yPers + 1][xPers] == '2')) //|| (map[yPers+1][xPers+1] == '0') || (map[yPers+1][xPers+1] == '2'))
+  if((map[yPers + 1][xPers] == '0') || (map[yPers + 1][xPers] == '2')) //|| ((map[yPers+1][xPers+1] == '0') || (map[yPers+1][xPers+1] == '2')))
     {
       pers->DestR.y =  pers->DestR.y - 1;
-      colision_haut(pers,map);
+      //colision_haut(pers,map);
       colision_bas(pers,map);
     }
 }
