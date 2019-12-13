@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
   TTF_Init();
   TTF_Font* police = TTF_OpenFont("./arial.ttf",65);
   SDL_Color color = {10,25,125,0};
-  SDL_Surface* TextSurf = TTF_RenderText_Solid(police,"Appuyez sur K pour jouer",color) ;
+  SDL_Surface* TextSurf = TTF_RenderText_Solid(police,"Appuyez sur K pour jouer",color);
   SDL_Texture* Text = SDL_CreateTextureFromSurface(ecran,TextSurf);
   //Ou sera affiche le texte et a quelle dimensions
   SDL_Rect text_pos;
@@ -260,6 +260,7 @@ int main(int argc, char *argv[])
 	      }break;
 	  }
       }
+    
       
       //Permet de faire tomber le personnage, comme si il y a avait de la gravite
       nain.DestR.y = nain.DestR.y + nain.vy;
